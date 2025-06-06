@@ -1,0 +1,33 @@
+name: Carrega de Temparatures diariament
+
+on:
+  schedule:
+    - cron: '59 23 * * *'   
+  workflow_dispatch:       
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'   
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run the temperature script
+        run: python temperatures.py
+
+      - name: Commit and push temperature file
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add temp_*.json
+          git commit -m "Afegir diariament fitxer de temparatures"
+          git push
